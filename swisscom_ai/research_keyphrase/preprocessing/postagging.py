@@ -8,11 +8,13 @@ import os
 import re
 import warnings
 from abc import ABC, abstractmethod
+from hazm.build.lib.hazm.SentenceTokenizer import SentenceTokenizer
 
 # NLTK imports
 import nltk
 from nltk.tag.util import tuple2str
 from nltk.parse import CoreNLPParser
+from hazm import POSTagger, WordTokenizer, SentenceTokenizer
 
 import swisscom_ai.research_keyphrase.preprocessing.custom_stanford as custom_stanford
 from swisscom_ai.research_keyphrase.util.fileIO import read_file, write_string
@@ -219,7 +221,34 @@ class PosTaggingCoreNLP(PosTagging):
         return '[ENDSENT]'.join(
             [' '.join([tuple2str(tagged_token, self.separator) for tagged_token in sent]) for sent in tagged_text])
         
+class PosTaggingHazm(PosTagging):
+    """
+    Concrete class of PosTagging using a CoreNLP server 
+    Provides a faster way to process several documents using since it doesn't require to load the model each time.
+    """
 
+    def __init__(self, model="resources/postagger.model"):
+        self.tagger = POSTagger(model=model)
+        self.sentTokenizer = SentenceTokenizer()
+        self.wordTokenizer = WordTokenizer(join_verb_parts=False, separate_emoji=True, replace_links=True, replace_IDs=True, replace_emails=True, replace_numbers=False, replace_hashtags=False)
+    
+    def pos_tag_raw_text(self, text, as_tuple_list=True):
+        
+        return self.tagger.tag_sents([self.wordTokenizer.tokenize(sent) for sent in self.sentTokenizer.tokenize(text)])
+
+class PosTaggingNone(PosTagging):
+    """
+    Concrete class of PosTagging using a CoreNLP server 
+    Provides a faster way to process several documents using since it doesn't require to load the model each time.
+    """
+
+    def __init__(self):
+        self.sentTokenizer = SentenceTokenizer()
+        self.wordTokenizer = WordTokenizer(join_verb_parts=False, separate_emoji=True, replace_links=True, replace_IDs=True, replace_emails=True, replace_numbers=False, replace_hashtags=False)
+    
+    def pos_tag_raw_text(self, text, as_tuple_list=True):
+        
+        return [[(word, 'NN') for word in self.wordTokenizer.tokenize(sent)] for sent in self.sentTokenizer.tokenize(text)]
 
 
 if __name__ == '__main__':
