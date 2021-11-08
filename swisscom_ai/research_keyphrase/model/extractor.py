@@ -13,7 +13,16 @@ GRAMMAR_EN = """  NP:
         {<NN.*|JJ>*<NN.*>}  # Adjective(s)(optional) + Noun(s)"""
 
 GRAMMAR_FA = """
-        {<N.*>*<N.*|AJ.*>}"""
+        NP: 
+                <P>{<N>}<V>
+        ADJP:
+				<.*[^e]>{<AJe?>}
+        NP:
+				{<DETe?|Ne?|NUMe?|AJe|PRO|CL|RESe?><DETe?|Ne?|NUMe?|AJe?|PRO|CL|RESe?>*}
+				<N>}{<.*e?>
+        ADJP:
+				{<AJe?>}
+        """
 
 GRAMMAR_DE = """
 NBAR:

@@ -6,7 +6,7 @@
 from nltk.stem import PorterStemmer
 from hazm import Lemmatizer, Normalizer
 
-class reiInputTextObj:
+class InputTextObj:
     """Represent the input text in which we want to extract keyphrases"""
 
     def __init__(self, pos_tagged, lang, stem=False, min_word_len=1):
