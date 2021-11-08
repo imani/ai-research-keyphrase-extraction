@@ -8,7 +8,6 @@ import os
 import re
 import warnings
 from abc import ABC, abstractmethod
-from hazm.build.lib.hazm.SentenceTokenizer import SentenceTokenizer
 
 # NLTK imports
 import nltk
