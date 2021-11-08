@@ -12,6 +12,9 @@ import nltk
 GRAMMAR_EN = """  NP:
         {<NN.*|JJ>*<NN.*>}  # Adjective(s)(optional) + Noun(s)"""
 
+GRAMMAR_FA = """
+        {<N.*>*<N.*|AJ.*>}"""
+
 GRAMMAR_DE = """
 NBAR:
         {<JJ|CARD>*<NN.*>+}  # [Adjective(s) or Article(s) or Posessive pronoun](optional) + Noun(s)
@@ -29,6 +32,8 @@ GRAMMAR_FR = """  NP:
 def get_grammar(lang):
     if lang == 'en':
         grammar = GRAMMAR_EN
+    elif lang == 'fa':
+        grammar = GRAMMAR_FA
     elif lang == 'de':
         grammar = GRAMMAR_DE
     elif lang == 'fr':
