@@ -4,29 +4,30 @@
 #Authors: Kamil Bennani-Smires, Yann Savary
 
 from nltk.stem import PorterStemmer
-
+from hazm import Lemmatizer, Normalizer
 
 class InputTextObj:
     """Represent the input text in which we want to extract keyphrases"""
 
-    def __init__(self, pos_tagged, lang, stem=False, min_word_len=3):
+    def __init__(self, pos_tagged, lang, stem=False, min_word_len=1):
         """
         :param pos_tagged: List of list : Text pos_tagged as a list of sentences
         where each sentence is a list of tuple (word, TAG).
         :param stem: If we want to apply stemming on the text.
         """
+        normalizer = Normalizer()
         self.min_word_len = min_word_len
-        self.considered_tags = {'NN', 'NNS', 'NNP', 'NNPS', 'JJ'}
+        self.considered_tags = {'N', 'Ne', 'AJe'}
         self.pos_tagged = []
         self.filtered_pos_tagged = []
         self.isStemmed = stem
         self.lang = lang
 
         if stem:
-            stemmer = PorterStemmer()
-            self.pos_tagged = [[(stemmer.stem(t[0]), t[1]) for t in sent] for sent in pos_tagged]
+            lemmatizer = Lemmatizer()
+            self.pos_tagged = [[(lemmatizer.lemmatize(normalizer.normalize(t[0])), t[1]) for t in sent] for sent in pos_tagged]
         else:
-            self.pos_tagged = [[(t[0].lower(), t[1]) for t in sent] for sent in pos_tagged]
+            self.pos_tagged = [[(normalizer.normalize(t[0]), t[1]) for t in sent] for sent in pos_tagged]
 
         temp = []
         for sent in self.pos_tagged:
@@ -44,7 +45,7 @@ class InputTextObj:
             self.pos_tagged = [[(tagged_token[0], convert(tagged_token[1])) for tagged_token in sentence] for sentence
                                in
                                self.pos_tagged]
-        self.filtered_pos_tagged = [[(t[0].lower(), t[1]) for t in sent if self.is_candidate(t)] for sent in
+        self.filtered_pos_tagged = [[(normalizer.normalize(t[0]), t[1]) for t in sent if self.is_candidate(t)] for sent in
                                     self.pos_tagged]
 
     def is_candidate(self, tagged_token):
